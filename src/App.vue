@@ -2,26 +2,56 @@
   #app
     img(src='./assets/logo.png')
     h1 Music App
+    select(v-model="selectedCountry")
+      option(v-for="country in countries" :value="country.value") {{country.name}}
+    spinner(v-show="loading")
     ul
+      artist(v-for="artist in artists", v-bind:artist="artist" v-bind:key="artist.mbid")
       li(v-for="artist in artists") {{artist.name}}
 
 </template>
 
 <script>
+import Artist from './components/Artist.vue'
+import Spinner from './components/Spinner.vue'
 import getArtists from './api'
 export default {
   name: 'app',
   data () {
     return {
-      artists: []
+      artists: [],
+      countries: [
+        { name: 'Argentina', value: 'argentina' },
+        { name: 'Colombia', value: 'colombia' },
+        { name: 'España', value: 'spain' }
+      ],
+      selectedCountry: 'argentina',
+      loading: true
     }
   },
-  mounted: function () {
-    const self = this
-    getArtists()
-      .then(function(artists){
-        self.artists = artists
-      })
+  components: {
+    Artist,
+    Spinner
+  },
+  methods: {
+    refreshArtist() {
+      const self = this
+      this.artists = []
+      this.loading = true
+      getArtists(this.selectedCountry)
+        .then(function(artists){
+          self.artists = artists
+          self.loading = false
+        })
+    }
+  },
+  mounted() {
+    this.refreshArtist()
+  },
+  watch: {
+    selectedCountry: function () {
+      this.refreshArtist()
+    }
   }
 }
 </script>
