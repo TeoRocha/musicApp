@@ -1,6 +1,6 @@
 <template lang="pug">
   #app
-    img(src='https://teorocha.github.io/musicApp/assets/logo.png')
+    img(src='./assets/logo.png')
     h1 Music App
     select(v-model="selectedCountry")
       option(v-for="country in countries" :value="country.value") {{country.name}}
